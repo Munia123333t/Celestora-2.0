@@ -4,9 +4,11 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import useCustomAxios from "../../Hooks/useCustomAxios";
 
 const AddArtifact = () => {
-  const { user, theme } = useContext(AuthContext);
+  const { user, theme, Toast } = useContext(AuthContext);
   const [artifactData, setArtifactData] = useState({
     artifactName: "",
     artifactImage: "",
@@ -20,11 +22,15 @@ const AddArtifact = () => {
     addedBy: user?.email,
     likeCount: 0,
   });
-
+  const secureAxios = useAxiosSecure();
+  const customAxios = useCustomAxios();
   useEffect(() => {
     window.scrollTo(0, 0);
     Aos.init({ duration: 500 });
-  }, []);
+    secureAxios.get(`/check-auth?email=${user.email}`).catch((error) => {
+      Toast(error.message, "error");
+    });
+  }, [secureAxios, user.email, Toast]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +39,8 @@ const AddArtifact = () => {
 
   const handleAddArtifact = (e) => {
     e.preventDefault();
-    console.log(artifactData);
-    fetch("http://localhost:3000/Artifacts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(artifactData),
-    })
-      .then((response) => response.json())
+    customAxios
+      .post("/Artifacts", artifactData)
       // eslint-disable-next-line no-unused-vars
       .then((data) => {
         Swal.fire({
@@ -76,7 +77,7 @@ const AddArtifact = () => {
 
   return (
     <div
-      className={`container mx-auto px-4 py-8 ${
+      className={`container mx-auto px-4 py-32 md:py-40 lg:py-52 ${
         theme === "dark" ? "text-white" : "text-black"
       }`}
     >

@@ -4,6 +4,8 @@ import { AuthContext } from "../../../Contexts/AuthContext/AuthProvider";
 import { Helmet } from "react-helmet";
 import { BounceLoader } from "react-spinners";
 import { FaHeart, FaRegHeart } from "react-icons/fa"; // For Love/Dislike Icons
+import useCustomAxios from "../../../Hooks/useCustomAxios";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const ArtifactDetails = () => {
   const { id } = useParams();
@@ -12,39 +14,32 @@ const ArtifactDetails = () => {
   const [loading, setLoading] = useState(true);
   const [likeCount, setLikeCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const customAxios = useCustomAxios();
+  const secureAxios = useAxiosSecure();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/Artifacts/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setArtifact(data);
-        setLikeCount(data.likeCount || 0);
-        fetch(
-          `http://localhost:3000/check-like-status/${id}?user_email=${user.email}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            setIsLiked(data.isLiked);
-          });
+    window.scrollTo(0, 0);
+  });
+  useEffect(() => {
+    customAxios(`/Artifacts/${id}`)
+      .then((res) => {
+        setArtifact(res.data);
+        setLikeCount(res.data.likeCount || 0);
+        secureAxios
+          .get(
+            `http://localhost:3000/check-like-status/${id}?user_email=${user.email}`
+          )
+          .then((res) => setIsLiked(res.data.isLiked));
       })
       .catch((error) => Toast(error.message, "error"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [Toast, customAxios, secureAxios, id, user.email]);
 
   const handleLikeToggle = () => {
     const updatedLikeCount = isLiked ? likeCount - 1 : likeCount + 1;
     const updatedIsLiked = !isLiked;
-
-    fetch(`http://localhost:3000/toggle-like/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_email: user.email,
-      }),
-    })
-      .then((response) => response.json())
+    customAxios
+      .patch(`/toggle-like/${id}`, { user_email: user.email })
       .then(() => {
         setLikeCount(updatedLikeCount);
         setIsLiked(updatedIsLiked);

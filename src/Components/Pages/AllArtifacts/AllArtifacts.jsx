@@ -3,21 +3,24 @@ import { Helmet } from "react-helmet";
 import { BounceLoader } from "react-spinners";
 import { AuthContext } from "../../../Contexts/AuthContext/AuthProvider";
 import Artifact from "../../Cards/Artifact";
+import useCustomAxios from "../../../Hooks/useCustomAxios";
 
 const AllArtifacts = () => {
   const [artifacts, setArtifacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const { theme, Toast } = useContext(AuthContext);
+  const customAxios = useCustomAxios();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch("http://localhost:3000/Artifacts")
-      .then((response) => response.json())
-      .then((data) => setArtifacts(data))
+  }, []);
+  useEffect(() => {
+    customAxios("/Artifacts")
+      .then((res) => setArtifacts(res.data))
       .catch((error) => Toast(error.message, "error"))
       .finally(() => setLoading(false));
-  }, []);
+  }, [Toast, customAxios]);
 
   const filteredArtifacts = artifacts.filter((artifact) =>
     artifact?.artifactName?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -25,7 +28,7 @@ const AllArtifacts = () => {
 
   return (
     <div
-      className={`container mx-auto px-4 py-8 ${
+      className={`container mx-auto px-4 py-32 md:py-40 lg:py-52 ${
         theme === "dark" ? "text-white" : "text-black"
       }`}
     >
