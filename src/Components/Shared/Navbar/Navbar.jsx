@@ -62,17 +62,39 @@ const NavBar = () => {
       className={`flex flex-col text-center lg:flex-row items-center justify-center gap-2 sm:gap-5 font-medium text-lg`}
     >
       <NavLink onClick={toggleMenuDropdown} to="/">
-        <span className="font-bold text-xl">Home</span>
+        <span className="font-bold text-base">Home</span>
       </NavLink>
       <NavLink onClick={toggleMenuDropdown} to={"/all-artifacts"}>
-        <span className="font-bold text-xl">All Artifacts</span>
+        <span className="font-bold text-base">All Artifacts</span>
       </NavLink>
       <NavLink onClick={toggleMenuDropdown} to={"/add-artifact"}>
-        <span className="font-bold text-xl">Add Artifacts</span>
+        <span className="font-bold text-base">Add Artifacts</span>
       </NavLink>
       <NavLink onClick={toggleMenuDropdown} to={"/about-us"}>
-        <span className="font-bold text-xl">About Us</span>
+        <span className="font-bold text-base">About Us</span>
       </NavLink>
+      {user && (
+        <NavLink
+          className={"sm:hidden"}
+          onClick={toggleMenuDropdown}
+          to={"/my-artifact"}
+        >
+          <span className="justify-between flex font-bold text-base w-fit">
+            My Artifacts
+          </span>
+        </NavLink>
+      )}
+      {user && (
+        <NavLink
+          className={"sm:hidden"}
+          onClick={toggleMenuDropdown}
+          to="/my-liked-artifact"
+        >
+          <span className="justify-between flex font-bold text-base">
+            Liked Artifacts
+          </span>
+        </NavLink>
+      )}
       {user && (
         <Link
           className="sm:hidden font-bold text-xl text-red-600"
@@ -86,7 +108,7 @@ const NavBar = () => {
   const navElementsEnd = (
     <div className="flex items-center justify-center sm:justify-left gap-2 mb-2 md:mb-0 sm:gap-5">
       {user && (
-        <div className={` dropdown dropdown-end`}>
+        <div className={`dropdown dropdown-end`}>
           <div
             tabIndex={0}
             role="button"
@@ -118,18 +140,22 @@ const NavBar = () => {
                 </h3>
               </li>
               <li className="hover:bg-gradient-to-t hover:from-primary/20 hover:to-primary/10">
-                <Link onClick={toggleMenuDropdown} to={"/my-artifact"}>
-                  <span className="justify-between flex font-bold text-base w-fit">
-                    My Artifacts
-                  </span>
-                </Link>
+                <div className="my-1">
+                  <NavLink onClick={toggleMenuDropdown} to={"/my-artifact"}>
+                    <span className="justify-between flex font-bold text-base w-fit">
+                      My Artifacts
+                    </span>
+                  </NavLink>
+                </div>
               </li>
               <li className="hover:bg-gradient-to-t hover:from-primary/20 hover:to-primary/10">
-                <Link onClick={toggleMenuDropdown} to="/my-liked-artifact">
-                  <span className="justify-between flex font-bold text-base w-fit">
-                    Liked Artifacts
-                  </span>
-                </Link>
+                <div>
+                  <NavLink onClick={toggleMenuDropdown} to="/my-liked-artifact">
+                    <span className="justify-between flex font-bold text-base w-fit">
+                      Liked Artifacts
+                    </span>
+                  </NavLink>
+                </div>
               </li>
               <li className="font-semibold text-xl text-red-600 hover:bg-gradient-to-t hover:from-primary/20 hover:to-primary/10">
                 <Link onClick={showSignOutModal}>Logout</Link>
@@ -165,7 +191,7 @@ const NavBar = () => {
   );
   return (
     <div
-      className={`navbar shadow-md rounded-b-md container mx-auto center z-[70] w-[98%] sm:w-full md:w-[96%] py-3 px-3 md:py-4 md:px-5 flex justify-between items-center my-4 fixed top-0 left-[49.8%] sm:left-[50.7%] md:left-[50.7%] lg:left-1/2 xl:left-[50.1%]  transform -translate-x-1/2 transition-all duration-500 -translate-y-4 ${
+      className={`navbar shadow-md rounded-b-md container mx-auto center z-[70] w-[98%] sm:w-full md:w-[96%] py-2 px-3 md:py-3 md:px-5 flex justify-between items-center my-4 fixed top-0 left-[49.8%] sm:left-[50.7%] md:left-[50.7%] lg:left-1/2 xl:left-[50.1%]  transform -translate-x-1/2 transition-all duration-500 -translate-y-4 ${
         scroll ? "bg-primary mt-4 rounded-b-2xl" : "bg-white"
       }`}
     >

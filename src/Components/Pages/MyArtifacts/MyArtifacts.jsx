@@ -10,6 +10,7 @@ import Aos from "aos";
 import { BounceLoader } from "react-spinners";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import useCustomAxios from "../../../Hooks/useCustomAxios";
+import Select from "react-select";
 
 const MyArtifacts = () => {
   const { user, Toast, theme } = useContext(AuthContext);
@@ -30,21 +31,85 @@ const MyArtifacts = () => {
   });
   const axiosSecure = useAxiosSecure();
   const customAxios = useCustomAxios();
+  const artifactTypes = [
+    { label: "Pottery", value: "Pottery" },
+    { label: "Mosaic Art", value: "Mosaic Art" },
+    { label: "Jewelry", value: "Jewelry" },
+    { label: "Weapon", value: "Weapon" },
+    { label: "Funerary Items", value: "Funerary Items" },
+    { label: "Seals", value: "Seals" },
+    { label: "Stone Artifact", value: "Stone Artifact" },
+    { label: "Documents", value: "Documents" },
+    { label: "Sculpture", value: "Sculpture" },
+    { label: "Cave Art", value: "Cave Art" },
+    { label: "Reliefs", value: "Reliefs" },
+    { label: "Statue", value: "Statue" },
+    { label: "Armor", value: "Armor" },
+    { label: "Monument", value: "Monument" },
+    { label: "Statues", value: "Statues" },
+    { label: "Funerary Mask", value: "Funerary Mask" },
+    { label: "Ship", value: "Ship" },
+    { label: "Mechanical Device", value: "Mechanical Device" },
+    { label: "Textile Art", value: "Textile Art" },
+    { label: "Law Code", value: "Law Code" },
+    { label: "Manuscripts", value: "Manuscripts" },
+    { label: "Portrait", value: "Portrait" },
+    { label: "Fossil", value: "Fossil" },
+    { label: "Stele", value: "Stele" },
+  ];
+  const [numberOfArtifacts, setNumberOfArtifacts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [artifactsPerPage, setArtifactsPerPage] = useState(6);
+  const numberOfPages = Math.ceil(numberOfArtifacts / artifactsPerPage);
+  const pages = Array.from({ length: numberOfPages }, (_, i) => i + 1);
+  const handleArtifactsPerPage = (e) => {
+    const val = parseInt(e.target.value);
+    setArtifactsPerPage(val);
+    setCurrentPage(1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < pages.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
     Aos.init({ duration: 500 });
   }, [artifacts]);
   useEffect(() => {
+    customAxios;
+  });
+  useEffect(() => {
+    const queryParam = searchTerm ? `&search=${searchTerm}` : "";
     axiosSecure
-      .get(`/my-artifacts?addedBy=${user?.email}`)
-      .then((res) => setArtifacts(res.data))
+      .get(
+        `/MyArtifacts?addedBy=${user?.email}&page=${
+          currentPage - 1
+        }&size=${artifactsPerPage}&${queryParam}`
+      )
+      .then((res) => {
+        setArtifacts(res.data.artifacts);
+        setNumberOfArtifacts(artifacts.length);
+      })
       .catch((error) => Toast(error.message, "error"))
       .finally(() => setLoading(false));
-  }, [Toast, user?.email, axiosSecure, updated]);
-
-  let filteredArtifacts = artifacts.filter((artifact) =>
-    artifact.artifactName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  }, [
+    Toast,
+    user?.email,
+    axiosSecure,
+    updated,
+    currentPage,
+    artifactsPerPage,
+    searchTerm,
+    artifacts.length,
+  ]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -156,81 +221,129 @@ const MyArtifacts = () => {
         </div>
       </div>
 
-      <div className="bg-white pt-10 pb-32 md:pb-40 lg:pb-52">
+      <div className="bg-white pt-10 pb-24 px-4 md:pb-32 2xl:pb-[9%]">
         <div className="container mx-auto">
           {loading ? (
             <div className="flex items-center justify-center min-h-screen">
-              <BounceLoader color="#fb9c28" size={110} />
+              <BounceLoader color="#A94A4A" size={110} />
             </div>
           ) : (
             <div>
               {artifacts.length === 0 ? (
                 <p className="text-5xl text-center font-bold text-red-500 mt-5">
-                  You have not added any artifacts yet.
-                </p>
-              ) : filteredArtifacts.length === 0 ? (
-                <p className="text-5xl text-center font-bold text-red-500 mt-5">
-                  No artifacts found for this name.
+                  No artifacts found!
                 </p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredArtifacts.map((artifact, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${
-                        theme === "dark" ? "bg-gray-950" : "bg-white"
-                      } flex-col rounded-lg shadow-lg p-2 md:p-3 lg:p-4`}
-                    >
-                      <img
-                        src={artifact.artifactImage}
-                        alt={artifact.artifactName}
-                        className="border-2 border-gray-100 mx-auto object-cover rounded-lg mb-4"
-                      />
-                      <div className="flex-grow">
-                        <h3 className="font-bold text-xl mb-2">
-                          {artifact.artifactName}
-                        </h3>
-                        <p
-                          className={`flex flex-wrap items-center gap-2 ${
-                            theme === "dark" ? "text-white" : "text-gray-700"
-                          }`}
-                        >
-                          <FaClipboardList className="text-teal-500 text-xl" />
-                          <strong>Artifact Type:</strong>{" "}
-                          {artifact.artifactType}
-                        </p>
-                        <p
-                          className={`flex flex-wrap items-center gap-2 ${
-                            theme === "dark" ? "text-white" : "text-gray-700"
-                          }`}
-                        >
-                          <BiTimeFive className="text-blue-500 text-xl" />
-                          <strong>Created At:</strong> {artifact.createdAt}
-                        </p>
+                <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {artifacts.map((artifact, index) => (
+                      <div
+                        key={index}
+                        className={`flex ${
+                          theme === "dark" ? "bg-gray-950" : "bg-white"
+                        } flex-col rounded-lg shadow-lg p-2 md:p-3 lg:p-4`}
+                      >
+                        <img
+                          src={artifact.artifactImage}
+                          alt={artifact.artifactName}
+                          className="border-2 border-gray-100 mx-auto object-cover rounded-lg mb-4"
+                        />
+                        <div className="flex-grow">
+                          <h3 className="font-bold text-xl mb-2">
+                            {artifact.artifactName}
+                          </h3>
+                          <p
+                            className={`flex flex-wrap items-center gap-2 ${
+                              theme === "dark" ? "text-white" : "text-gray-700"
+                            }`}
+                          >
+                            <FaClipboardList className="text-teal-500 text-xl" />
+                            <strong>Artifact Type:</strong>{" "}
+                            {artifact.artifactType}
+                          </p>
+                          <p
+                            className={`flex flex-wrap items-center gap-2 ${
+                              theme === "dark" ? "text-white" : "text-gray-700"
+                            }`}
+                          >
+                            <BiTimeFive className="text-blue-500 text-xl" />
+                            <strong>Created At:</strong> {artifact.createdAt}
+                          </p>
+                        </div>
+                        <div className="flex gap-3 mt-4">
+                          <button
+                            onClick={() => handleDelete(artifact._id)}
+                            className="px-4 py-1 rounded-md bg-red-500 text-white font-medium"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => handleUpdate(artifact)}
+                            className="px-4 py-1 bg-sky-500 text-white rounded-md"
+                          >
+                            Update
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex gap-3 mt-4">
-                        <button
-                          onClick={() => handleDelete(artifact._id)}
-                          className="px-4 py-1 rounded-md bg-red-500 text-white font-medium"
-                        >
-                          Delete
-                        </button>
-                        <button
-                          onClick={() => handleUpdate(artifact)}
-                          className="px-4 py-1 bg-sky-500 text-white rounded-md"
-                        >
-                          Update
-                        </button>
-                      </div>
+                    ))}
+                  </div>
+                  <div className="mx-auto flex flex-col items-center mt-14 space-y-4">
+                    <div className="flex items-center flex-wrap gap-2 justify-center space-x-2">
+                      <button
+                        className="font-semibold px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700"
+                        onClick={handlePrevPage}
+                      >
+                        Prev
+                      </button>
+                      {
+                        <div className="flex space-x-2 gap-2 justify-center items-center flex-wrap">
+                          {pages.map((page) => (
+                            <button
+                              key={page}
+                              className={`font-semibold px-4 py-2 rounded-full ${
+                                currentPage === page
+                                  ? "bg-primary text-white"
+                                  : "bg-gray-100 text-primary hover:bg-primary hover:text-white"
+                              }`}
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
+                      }
+                      <button
+                        className="font-semibold px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700"
+                        onClick={handleNextPage}
+                      >
+                        Next
+                      </button>
                     </div>
-                  ))}
+
+                    <div className="flex items-center flex-wrap justify-center space-x-2">
+                      <span className="text-gray-600 font-medium">Show:</span>
+                      <select
+                        value={artifactsPerPage}
+                        onChange={handleArtifactsPerPage}
+                        className="block input input-bordered w-fit p-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-primary focus:border-primary font-semibold"
+                      >
+                        <option value="6">6</option>
+                        <option value="9">9</option>
+                        <option value="12">12</option>
+                        <option value="15">15</option>
+                      </select>
+                      <span className="text-gray-600 font-medium">
+                        artifacts per page
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
               <dialog
                 id="update_modal"
                 className="modal modal-bottom sm:modal-middle"
               >
-                <div className="modal-box w-full max-w-lg rounded-lg shadow-lg p-6">
+                <div className="modal-box w-full max-w-lg rounded-lg shadow-lg p-6 bg-black text-white">
                   <h2 className="text-2xl font-bold text-primary mb-4">
                     Update {artifactData.artifactName} Artifact
                   </h2>
@@ -238,7 +351,7 @@ const MyArtifacts = () => {
                     <div className="mb-3">
                       <label
                         htmlFor="artifactName"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Artifact Name
                       </label>
@@ -249,14 +362,14 @@ const MyArtifacts = () => {
                         value={artifactData.artifactName}
                         onChange={handleInputChange}
                         placeholder="Artifact Name"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
 
                     <div className="mb-3">
                       <label
                         htmlFor="artifactImage"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Artifact Image URL
                       </label>
@@ -267,39 +380,70 @@ const MyArtifacts = () => {
                         value={artifactData.artifactImage}
                         onChange={handleInputChange}
                         placeholder="Artifact Image URL"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
+                    <label
+                      className="block text-lg font-semibold mb-2"
+                      htmlFor="artifactImage"
+                    >
+                      Artifact Type
+                    </label>
 
-                    <div data-aos="fade-up" className="mb-4">
-                      <label
-                        className="block text-lg font-semibold mb-2"
-                        htmlFor="artifactType"
-                      >
-                        Artifact Type
-                      </label>
-                      <select
-                        id="artifactType"
-                        name="artifactType"
-                        value={artifactData.artifactType}
-                        onChange={handleInputChange}
-                        className="select select-bordered w-full"
-                        required
-                      >
-                        <option value="" disabled>
-                          Choose Artifact Type
-                        </option>
-                        <option value="Tools">Tools</option>
-                        <option value="Weapons">Weapons</option>
-                        <option value="Documents">Documents</option>
-                        <option value="Writings">Writings</option>
-                      </select>
-                    </div>
+                    <Select
+                      id="artifactType"
+                      name="artifactType"
+                      options={artifactTypes}
+                      value={
+                        artifactTypes.find(
+                          (option) => option.value === artifactData.artifactType
+                        ) || null
+                      }
+                      onChange={(selectedOption) => {
+                        handleInputChange({
+                          target: {
+                            name: "artifactType",
+                            value: selectedOption ? selectedOption.value : "",
+                          },
+                        });
+                      }}
+                      className="w-full mb-4"
+                      required
+                      placeholder="Choose Artifact Type"
+                      isSearchable
+                      styles={{
+                        control: (provided, state) => ({
+                          ...provided,
+                          position: "relative",
+                          zIndex: 50,
+                          borderColor: state.isFocused
+                            ? "#A94A4A"
+                            : provided.borderColor,
+                          borderWidth: "3px",
+                          transition:
+                            "border-color 0.2s ease, box-shadow 0.2s ease",
+                        }),
+                        menu: (provided) => ({
+                          ...provided,
+                          zIndex: 100,
+                        }),
+                        option: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isSelected
+                            ? "#A94A4A"
+                            : state.isFocused
+                            ? "rgba(251, 156, 40, 0.8)"
+                            : "transparent",
+                          color: state.isSelected ? "white" : "black",
+                          cursor: "pointer",
+                        }),
+                      }}
+                    />
 
                     <div className="mb-3">
                       <label
                         htmlFor="historicalContext"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Historical Context
                       </label>
@@ -309,14 +453,14 @@ const MyArtifacts = () => {
                         value={artifactData.historicalContext}
                         onChange={handleInputChange}
                         placeholder="Historical Context"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       ></textarea>
                     </div>
 
                     <div className="mb-3">
                       <label
                         htmlFor="createdAt"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Created At
                       </label>
@@ -327,14 +471,14 @@ const MyArtifacts = () => {
                         value={artifactData.createdAt}
                         onChange={handleInputChange}
                         placeholder="Created At"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
 
                     <div className="mb-3">
                       <label
                         htmlFor="discoveredAt"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Discovered At
                       </label>
@@ -345,14 +489,14 @@ const MyArtifacts = () => {
                         value={artifactData.discoveredAt}
                         onChange={handleInputChange}
                         placeholder="Discovered At"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
 
                     <div className="mb-3">
                       <label
                         htmlFor="discoveredBy"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Discovered By
                       </label>
@@ -363,14 +507,14 @@ const MyArtifacts = () => {
                         value={artifactData.discoveredBy}
                         onChange={handleInputChange}
                         placeholder="Discovered By"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
 
                     <div className="mb-3">
                       <label
                         htmlFor="presentLocation"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-lg font-semibold mb-2"
                       >
                         Present Location
                       </label>
@@ -381,7 +525,7 @@ const MyArtifacts = () => {
                         value={artifactData.presentLocation}
                         onChange={handleInputChange}
                         placeholder="Present Location"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full text-black focus:ring-primary focus:border-[3px] focus:border-primary"
                       />
                     </div>
 
@@ -402,7 +546,7 @@ const MyArtifacts = () => {
                         }
                         className="px-6 py-2 bg-red-500 text-white rounded-md"
                       >
-                        Close
+                        Cancel
                       </button>
                     </div>
                   </form>

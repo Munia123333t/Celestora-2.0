@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./Components/Shared/Errorpage/Errorpage";
 import Root from "./Components/Layout/Root";
 import AuthProvider from "./Contexts/AuthContext/AuthProvider";
-import Login from "./Components/Forms/LogIn";
+import Login from "./Components/Forms/Login";
 import SignUp from "./Components/Forms/SignUp";
 import Home from "./Components/Pages/Home/Home";
 import AllArtifacts from "./Components/Pages/AllArtifacts/AllArtifacts";
@@ -14,6 +14,7 @@ import AddArtifact from "./Components/Forms/AddArtifact";
 import MyArtifacts from "./Components/Pages/MyArtifacts/MyArtifacts";
 import PrivateRoute from "./ProtectedRoute/PrivateRoute";
 import MyLikedArtifacts from "./Components/Pages/MyLikedArtifacts/MyLikedArtifacts";
+import AboutUs from "./Components/Pages/AboutUs/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,9 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:3000/Artifacts/${params.id}`),
+          fetch(
+            `https://artifact-hub-server.vercel.app/Artifacts/${params.id}`
+          ),
       },
       {
         path: "/add-artifact",
@@ -62,6 +65,10 @@ const router = createBrowserRouter([
             <MyLikedArtifacts></MyLikedArtifacts>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "about-us",
+        element: <AboutUs></AboutUs>,
       },
       {
         path: "/login",
