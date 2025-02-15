@@ -1,12 +1,12 @@
-# Artifact Hub 📜🏺
+# Celestora 📜🏺
 
-The **Artifact Hub** is an interactive platform designed to catalog and explore the world's most fascinating historical artifacts. Whether you're an enthusiast of ancient tools, documents, or relics, this site allows you to browse, contribute, and learn more about artifacts from across history.
+The **Celestora** is an interactive platform designed to catalog and explore the world's most fascinating historical artifacts. Whether you're an enthusiast of ancient tools, documents, or relics, this site allows you to browse, contribute, and learn more about artifacts from across history.
 
 ---
 
 ## 🚀 Live Demo
 
-[Live Website](https://historical-artifacts-tracker.web.app/)
+[Live Website](https://celestora.netlify.app/)
 
 ---
 
@@ -90,51 +90,6 @@ The **Artifact Hub** is an interactive platform designed to catalog and explore 
 
 ---
 
-## 🎥 Screenshots
-
-### 🏠 Home Page
-
-![Home Page](src/assets/Screenshot/Home.png)
-
-### 🔑 Login Page
-
-![Login Page](src/assets/Screenshot/login.png)
-
-### 🖊️ Registration Page
-
-![Registration Page](src/assets/Screenshot/signup.png)
-
-### 📜 All Artifacts Page
-
-![All Artifacts Page](src/assets/Screenshot/all-artifact.png)
-![All Artifacts Page](src/assets/Screenshot/all-artifact-1.png)
-
-### 🖼️ Artifact Details Page
-
-![Artifact Details Page](src/assets/Screenshot/artifact-details.png)
-
-### ➕ Add Artifact Page
-
-![Add Artifact Page](src/assets/Screenshot/add-artifact.png)
-
-### About Page
-
-![About Page](src/assets/Screenshot/about-us.png)
-
-### My Artifacts Page
-
-![My Artifacts Page](src/assets/Screenshot/my-artifact.png)
-
-### Update Artifact Page
-
-![Update Artifact Page](src/assets/Screenshot/Update-Artifact.png)
-
-### Like Artifacts Page
-
-![Like Artifacts Page](src/assets/Screenshot/liked-artifact.png)
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! Follow these steps:
@@ -147,4 +102,4 @@ Contributions are welcome! Follow these steps:
 
 ---
 
-Built with 💙 and curiosity for history by [Sarafat Karim](https://www.linkedin.com/in/sarafat-karim/)
+Built with 💙 and curiosity for history by [Munia Akhter](https://www.linkedin.com/in/munia-akhter-27304329a/)
